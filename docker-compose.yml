@@ -1,0 +1,10 @@
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: financial_rabbitmq
+    ports:
+      - "5672:5672"   # The standard port for Python/React to connect
+      - "15672:15672" # The port for the Management Web UI
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
