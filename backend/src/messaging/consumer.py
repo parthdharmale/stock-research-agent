@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 
 from src.core.graph import portfolio_app
 from src.messaging.publisher import publish_event
+from src.core.memory import memory_manager
 
 load_dotenv()
 
@@ -30,6 +31,11 @@ def process_task(ch, method, properties, body):
     print("AI Processing completed.\n")
 
     final_report = final_state.get("final_report", "Error: No report generated.")
+
+    if final_report and final_report != "None":
+        print("🧠 Saving report to Vector Memory...")
+        for ticker in tickers:
+            memory_manager.save_report(ticker, final_report)
 
     publish_event({
         "status": "completed",

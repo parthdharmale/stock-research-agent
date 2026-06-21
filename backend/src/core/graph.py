@@ -1,7 +1,7 @@
 from langgraph.graph import StateGraph, START, END
 from .state import PortfolioState
 
-from src.agents.data_gatherer import data_gathering_node
+from src.agents.data_gatherer import data_gatherer_node
 from src.agents.risk_analyst import risk_analysis_node
 from src.agents.report_writer import report_synthesis_node
 from src.agents.critic import critic_node
@@ -45,7 +45,7 @@ def create_portfolio_graph():
     """Builds and compiles the multi-agent workflow"""
     workflow = StateGraph(PortfolioState)
 
-    workflow.add_node("data_gatherer", data_gathering_node)
+    workflow.add_node("data_gatherer", data_gatherer_node)
     workflow.add_node("risk_analyst", risk_analysis_node,)
     workflow.add_node("report_writer", report_synthesis_node)
     workflow.add_node("critic", critic_node)
