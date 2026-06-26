@@ -26,8 +26,27 @@ def process_task(ch, method, properties, body):
         "feedback": "None"
     }
 
-    print("AI agents are now procesing the task...\n")
-    final_state = portfolio_app.invoke(initial_state)
+    thread_config = {"configurable": {"thread_id": f"task_{tickers[0]}"}}
+
+    print("🤖 AI agents are now processing the task...\n")
+
+    paused_state = portfolio_app.invoke(initial_state, config=thread_config)
+    state_snapshot = portfolio_app.get_state(thread_config)
+
+    if state_snapshot.next and state_snapshot.next[0] == 'report_writer':
+        print("\n" + "="*50)
+        print("🛑 HUMAN-IN-THE-LOOP BREAKPOINT TRIGGERED 🛑")
+        print("Data has been gathered and analyzed. State frozen in checkpoints.sqlite.")
+        print("="*50 + "\n")
+        
+        input("👨‍💼 [MANAGER]: Review the logs above. Press ENTER to authorize writing the final report...")
+        
+        print("✅ Authorized. Resuming compilation from SQLite snapshot...")
+        
+        final_state = portfolio_app.invoke(None, config=thread_config)
+    else:
+        final_state = paused_state
+
     print("AI Processing completed.\n")
 
     final_report = final_state.get("final_report", "Error: No report generated.")

@@ -1,3 +1,5 @@
+import sqlite3
+from langgraph.checkpoint.sqlite import SqliteSaver
 from langgraph.graph import StateGraph, START, END
 from .state import PortfolioState
 
@@ -71,7 +73,13 @@ def create_portfolio_graph():
         }
     )
 
-    app = workflow.compile()
+    conn = sqlite3.connect("checkpoints.sqlite", check_same_thread=False)
+    memory = SqliteSaver(conn)
+
+    app = workflow.compile(
+        checkpointer=memory,
+        interrupt_before=["report_writer"]
+    )
 
     return app
     
